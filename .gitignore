@@ -1,0 +1,48 @@
+# ========== Unreal Engine ==========
+
+# Build / compile / cache
+Binaries/
+Build/
+Intermediate/
+Saved/
+DerivedDataCache/
+
+# Per-machine / per-user editor state you通常不提交
+# 你可以选择性保留某些 Config/... 具体看你团队约定
+# 常用做法：忽略个人本地覆盖文件
+Config/DefaultEditorPerProjectUserSettings.ini
+
+# Plugin intermediates
+Plugins/*/Binaries/
+Plugins/*/Intermediate/
+Plugins/*/Saved/
+
+# Optional: 如果你有 StartContent 且不想提交
+# Content/StartContent/
+
+# ========== Visual Studio / Rider / VSCode ==========
+.vs/
+*.sln
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.opendb
+
+.idea/
+.vscode/
+*.code-workspace
+
+# ========== OS ==========
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.DocumentRevisions-V100
+.Trashes
