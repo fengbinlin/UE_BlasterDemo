@@ -24,13 +24,14 @@ public:
 	// Sets default values for this actor's properties
 	AWeapon();
 	virtual void Tick(float DeltaTime) override;
-	UPROPERTY(VisibleAnywhere)
-	EWeaponState WeaponState;
+
 
 
 protected:
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	virtual void OnSphereOverlap (UPrimitiveComponent* overleapComponent, AActor* otherActor,UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult);
 
 private:
 	UPROPERTY(VisibleAnywhere, Category="Weapon Properties")
@@ -39,5 +40,10 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	class USphereComponent* AreaSphere;
 
+	UPROPERTY(VisibleAnywhere , Category = "Weapon Properties")
+	EWeaponState WeaponState;
+
+	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
+	class UWidgetComponent* PickupWidget;
 
 };
