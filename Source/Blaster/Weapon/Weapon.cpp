@@ -48,38 +48,15 @@ void AWeapon::BeginPlay()
 		AreaSphere->SetGenerateOverlapEvents(true);  // 确保生成重叠事件
 		AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnSphereOverlap);
 
-		if (GEngine) {
-			GEngine->AddOnScreenDebugMessage(
-				-1,
-				15.f,
-				FColor::Red,
-				FString::Printf(TEXT("Au"))
-			);
-		}
 	}
 
 }
 
 void AWeapon::OnSphereOverlap(UPrimitiveComponent* overleapComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult)
 {
-	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			15.f,
-			FColor::Red,
-			FString::Printf(TEXT("ObjectIn"))
-		);
-	}
+
 	ABlasterCharacter* blasterCharacter = Cast<ABlasterCharacter>(otherActor);
 	if (blasterCharacter && PickupWidget) {
-		if (GEngine) {
-			GEngine->AddOnScreenDebugMessage(
-			-1,
-			15.f,
-				FColor::Red,
-				FString::Printf(TEXT("PlayerIn"))
-			);
-		}
 		PickupWidget->SetVisibility(true);
 	}
 
