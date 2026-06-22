@@ -6,6 +6,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "Blaster/Weapon/Weapon.h"
 
 // Sets default values
 ABlasterCharacter::ABlasterCharacter()
@@ -28,6 +30,13 @@ ABlasterCharacter::ABlasterCharacter()
 
 	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidget"));
 	OverheadWidget->SetupAttachment(RootComponent);
+
+}
+
+void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappingWeapon,COND_OwnerOnly);
 
 }
 
@@ -58,6 +67,8 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 }
 
+
+
 void ABlasterCharacter::MoveForward(float Value) {
 	const FRotator YawRotation(0.f,Controller->GetControlRotation().Yaw, 0.f);
 	const FVector Direction(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X));
@@ -77,6 +88,49 @@ void ABlasterCharacter::Turn(float Value) {
 
 void ABlasterCharacter::LookUp(float Value) {
 	AddControllerPitchInput(Value);
+}
+
+void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
+{
+	if (OverlappingWeapon) {
+		OverlappingWeapon->ShowPickupWidget(true);
+	}
+	if (LastWeapon) {
+		LastWeapon->ShowPickupWidget(false);
+	}
+}
+
+void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
+{
+	//官方教程有BUG
+	//if (OverlappingWeapon) {
+	//	OverlappingWeapon->ShowPickupWidget(false);
+	//}
+	//OverlappingWeapon = Weapon;
+	//if (IsLocallyControlled()) {
+	//	if (OverlappingWeapon) {
+	//		OverlappingWeapon->ShowPickupWidget(true);
+	//	}
+	//}
+
+	if (Weapon) {
+		OverlappingWeapon = Weapon;
+		if (IsLocallyControlled()) {
+			if (OverlappingWeapon) {
+				OverlappingWeapon->ShowPickupWidget(true);
+			}
+		}
+	}
+	else {
+		if (IsLocallyControlled()) {
+			if (OverlappingWeapon) {
+				OverlappingWeapon->ShowPickupWidget(false);
+			}
+		}
+
+		OverlappingWeapon = Weapon;
+	}
+
 }
 
 

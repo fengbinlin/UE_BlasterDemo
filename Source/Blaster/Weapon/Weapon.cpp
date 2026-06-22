@@ -9,7 +9,7 @@
 // Sets default values
 AWeapon::AWeapon()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
 
@@ -47,19 +47,28 @@ void AWeapon::BeginPlay()
 		AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);  // 只响应Pawn
 		AreaSphere->SetGenerateOverlapEvents(true);  // 确保生成重叠事件
 		AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnSphereOverlap);
+		AreaSphere->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnSphereEndOverlap);
 
 	}
 
 }
 
-void AWeapon::OnSphereOverlap(UPrimitiveComponent* overleapComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult)
+void AWeapon::OnSphereOverlap(UPrimitiveComponent* OverleapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 
-	ABlasterCharacter* blasterCharacter = Cast<ABlasterCharacter>(otherActor);
-	if (blasterCharacter && PickupWidget) {
-		PickupWidget->SetVisibility(true);
+	ABlasterCharacter* blasterCharacter = Cast<ABlasterCharacter>(OtherActor);
+	if (blasterCharacter) {
+		blasterCharacter->SetOverlappingWeapon(this);
 	}
 
+}
+
+void AWeapon::OnSphereEndOverlap(UPrimitiveComponent* OverleapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex)
+{
+	ABlasterCharacter* blasterCharacter = Cast<ABlasterCharacter>(OtherActor);
+	if (blasterCharacter) {
+		blasterCharacter->SetOverlappingWeapon(nullptr);
+	}
 }
 
 // Called every frame
@@ -67,5 +76,13 @@ void AWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AWeapon::ShowPickupWidget(bool bShowWidget)
+{
+	if (PickupWidget) {
+		PickupWidget->SetVisibility(bShowWidget);
+	}
+	
 }
 
