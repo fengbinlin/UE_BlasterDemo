@@ -34,4 +34,7 @@ private:
 	void Turn(float Value);
 	void LookUp(float Value);
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UWidgetComponent* OverheadWidget;
+
 };
