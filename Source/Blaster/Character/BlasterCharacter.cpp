@@ -103,22 +103,39 @@ void ABlasterCharacter::LookUp(float Value) {
 
 void ABlasterCharacter::EquipButtonPressed()
 {
-	if (Combat && HasAuthority()) {
-		//Combat->Character = this;
-		Combat->EquipWeapon(OverlappingWeapon);
-		if (GEngine) {
-			GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, FString::Printf(TEXT("EquipButtonPressed")));
+	if (Combat) {
+		if (HasAuthority()) {
+			Combat->EquipWeapon(OverlappingWeapon);
+		}
+		else {
+			ServerEquipButtonPressed();
 		}
 	}
 }
 
 void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 {
+	if (GEngine) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, FString::Printf(TEXT("OnRep")));
+	}
 	if (OverlappingWeapon) {
+		if (GEngine) {
+			GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, FString::Printf(TEXT("ShowLocalPicuUpWidgetB")));
+		}
 		OverlappingWeapon->ShowPickupWidget(true);
 	}
-	if (LastWeapon) {
-		LastWeapon->ShowPickupWidget(false);
+	//if (LastWeapon) {
+	//	if (GEngine) {
+	//		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, FString::Printf(TEXT("CloseLocalPicuUpWidgetRep")));
+	//	}
+	//	LastWeapon->ShowPickupWidget(false);
+	//}
+}
+
+void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
+{
+	if (Combat) {
+		Combat->EquipWeapon(OverlappingWeapon);
 	}
 }
 
@@ -134,11 +151,17 @@ void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 	//		OverlappingWeapon->ShowPickupWidget(true);
 	//	}
 	//}
-
+	if (GEngine) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, FString::Printf(TEXT("SetOverlappingWeapon")));
+	}
 	if (Weapon) {
 		OverlappingWeapon = Weapon;
+		if (GEngine) {
+			GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow, FString::Printf(TEXT("SetLocalPicuUpWidget")));
+		}
 		if (IsLocallyControlled()) {
 			if (OverlappingWeapon) {
+
 				OverlappingWeapon->ShowPickupWidget(true);
 			}
 		}

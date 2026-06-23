@@ -4,6 +4,7 @@
 #include "Weapon.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "Blaster/Character/BlasterCharacter.h"
 
 // Sets default values
@@ -58,6 +59,9 @@ void AWeapon::OnSphereOverlap(UPrimitiveComponent* OverleapComponent, AActor* Ot
 
 	ABlasterCharacter* blasterCharacter = Cast<ABlasterCharacter>(OtherActor);
 	if (blasterCharacter) {
+		if (GEngine) {
+			GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, FString::Printf(TEXT("Collision")));
+		}
 		blasterCharacter->SetOverlappingWeapon(this);
 	}
 
@@ -69,6 +73,28 @@ void AWeapon::OnSphereEndOverlap(UPrimitiveComponent* OverleapComponent, AActor*
 	if (blasterCharacter) {
 		blasterCharacter->SetOverlappingWeapon(nullptr);
 	}
+}
+
+void AWeapon::OnRep_WeaponState()
+{
+	switch (WeaponState) {
+	case EWeaponState::EWS_Equipped:
+		ShowPickupWidget(false);
+		break;
+	}
+}
+
+void AWeapon::SetWeaponState(EWeaponState State)
+{
+
+	WeaponState = State;
+	switch (WeaponState) {
+	case EWeaponState::EWS_Equipped:
+		ShowPickupWidget(false);
+		AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		break;
+	}
+
 }
 
 // Called every frame
@@ -84,5 +110,12 @@ void AWeapon::ShowPickupWidget(bool bShowWidget)
 		PickupWidget->SetVisibility(bShowWidget);
 	}
 	
+}
+
+void AWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AWeapon, WeaponState);
 }
 

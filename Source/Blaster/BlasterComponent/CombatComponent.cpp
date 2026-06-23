@@ -48,7 +48,7 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToquip)
 
 		}
 		EquippedWeapon->SetOwner(Character);
-		EquippedWeapon->ShowPickupWidget(false);
+
 	}
 }
 
