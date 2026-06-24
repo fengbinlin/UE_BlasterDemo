@@ -34,6 +34,8 @@ ABlasterCharacter::ABlasterCharacter()
 
 	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 	Combat->SetIsReplicated(true);
+
+	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 }
 
 void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -76,6 +78,9 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("LookUp", this, &ThisClass::LookUp);
 	PlayerInputComponent->BindAction("Jump",IE_Pressed, this, &ThisClass::Jump);
 	PlayerInputComponent->BindAction("Equip",IE_Pressed,this, &ABlasterCharacter::EquipButtonPressed);
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ABlasterCharacter::CrouchButtonPressed);
+	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ABlasterCharacter::AimButtonPressed);
+	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ABlasterCharacter::AimButtonReleased);
 }
 
 
@@ -101,6 +106,41 @@ void ABlasterCharacter::LookUp(float Value) {
 	AddControllerPitchInput(Value);
 }
 
+void ABlasterCharacter::CrouchButtonPressed() {
+	if (bIsCrouched) {
+		UnCrouch();
+	}
+	else {
+		Crouch();
+	}
+
+}
+
+void ABlasterCharacter::AimButtonPressed()
+{
+	if (Combat) {
+		if (HasAuthority()) {
+			Combat->SetAiming(true);
+		}
+		else {
+			Combat->ServerSetAiming(true);
+		}
+		
+	}
+}
+void ABlasterCharacter::AimButtonReleased()
+{
+	if (Combat) {
+		if (HasAuthority()) {
+			Combat->SetAiming(false);
+		}
+		else {
+			Combat->ServerSetAiming(false);
+		}
+
+	}
+}
+
 void ABlasterCharacter::EquipButtonPressed()
 {
 	if (Combat) {
@@ -115,16 +155,16 @@ void ABlasterCharacter::EquipButtonPressed()
 
 void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 {
-	if (OverlappingWeapon) {
+	if (LastWeapon)
+	{
+		LastWeapon->ShowPickupWidget(false);
+	}
 
+	if (OverlappingWeapon)
+	{
 		OverlappingWeapon->ShowPickupWidget(true);
 	}
-	//if (LastWeapon) {
-	//	if (GEngine) {
-	//		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, FString::Printf(TEXT("CloseLocalPicuUpWidgetRep")));
-	//	}
-	//	LastWeapon->ShowPickupWidget(false);
-	//}
+
 }
 
 void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
@@ -171,6 +211,11 @@ void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 bool ABlasterCharacter::IsWeaponEquipped()
 {
 	return (Combat && Combat->EquippedWeapon);
+}
+
+bool ABlasterCharacter::IsAiming()
+{
+	return (Combat && Combat->bIsAiming);
 }
 
 

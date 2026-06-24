@@ -19,10 +19,19 @@ void UCombatComponent::BeginPlay()
 
 	
 }
+void UCombatComponent::SetAiming(bool L_bIsAiming)
+{
+	bIsAiming = L_bIsAiming;
+}
+void UCombatComponent::ServerSetAiming_Implementation(bool L_bIsAiming)
+{
+	bIsAiming = L_bIsAiming;
+}
 void UCombatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UCombatComponent, EquippedWeapon);
+	DOREPLIFETIME(UCombatComponent, bIsAiming);
 }
 
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

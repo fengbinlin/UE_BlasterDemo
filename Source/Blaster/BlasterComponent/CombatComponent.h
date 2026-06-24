@@ -19,13 +19,19 @@ public:
 	void EquipWeapon(class AWeapon* WeaponToquip);
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+protected:
+	virtual void BeginPlay() override;
+	void SetAiming(bool L_bIsAiming);
+	UFUNCTION(Server,Reliable)
+	void ServerSetAiming(bool L_bIsAiming);
+
 private:
 	class ABlasterCharacter* Character;
 	UPROPERTY(Replicated)
 	class AWeapon* EquippedWeapon;
 
-protected:
-	virtual void BeginPlay() override;
+	UPROPERTY(Replicated)
+	bool bIsAiming;
 
 public:	
 
