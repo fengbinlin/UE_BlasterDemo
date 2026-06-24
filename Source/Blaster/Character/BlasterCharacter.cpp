@@ -115,13 +115,8 @@ void ABlasterCharacter::EquipButtonPressed()
 
 void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 {
-	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, FString::Printf(TEXT("OnRep")));
-	}
 	if (OverlappingWeapon) {
-		if (GEngine) {
-			GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, FString::Printf(TEXT("ShowLocalPicuUpWidgetB")));
-		}
+
 		OverlappingWeapon->ShowPickupWidget(true);
 	}
 	//if (LastWeapon) {
@@ -151,14 +146,9 @@ void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 	//		OverlappingWeapon->ShowPickupWidget(true);
 	//	}
 	//}
-	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, FString::Printf(TEXT("SetOverlappingWeapon")));
-	}
+
 	if (Weapon) {
 		OverlappingWeapon = Weapon;
-		if (GEngine) {
-			GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow, FString::Printf(TEXT("SetLocalPicuUpWidget")));
-		}
 		if (IsLocallyControlled()) {
 			if (OverlappingWeapon) {
 
@@ -176,6 +166,11 @@ void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 		OverlappingWeapon = Weapon;
 	}
 
+}
+
+bool ABlasterCharacter::IsWeaponEquipped()
+{
+	return (Combat && Combat->EquippedWeapon);
 }
 
 

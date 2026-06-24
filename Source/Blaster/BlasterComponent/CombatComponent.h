@@ -17,9 +17,11 @@ public:
 	friend class ABlasterCharacter;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void EquipWeapon(class AWeapon* WeaponToquip);
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 private:
 	class ABlasterCharacter* Character;
+	UPROPERTY(Replicated)
 	class AWeapon* EquippedWeapon;
 
 protected:
